@@ -1,23 +1,24 @@
 import { MdOutlineRemoveCircleOutline } from 'react-icons/md';
 
 import { Btn, List, ListItem } from './Contacts.styled';
-import { remove } from 'redux/contactsSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { deleteContact, fetchAll } from 'redux/operations';
+import { selectFilteredContacts } from 'redux/selectors';
 
 export const Contacts = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-  const filter = useSelector(state => state.filter);
+  const filteredContacts = useSelector(selectFilteredContacts);
 
-  const filteredContacts = contacts.filter(({ name }) =>
-    name.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    dispatch(fetchAll());
+  }, [dispatch]);
 
   return (
     <List>
       {filteredContacts.map(({ name, number, id }) => (
         <ListItem key={id}>
-          <Btn onClick={() => dispatch(remove(id))}>
+          <Btn onClick={() => dispatch(deleteContact(id))}>
             <MdOutlineRemoveCircleOutline size="24" />
           </Btn>
           {name}: {number}

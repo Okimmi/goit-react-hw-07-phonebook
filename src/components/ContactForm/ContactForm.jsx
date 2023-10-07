@@ -9,7 +9,8 @@ import {
   ListItem,
 } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { add } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 
 const schema = yup.object().shape({
   name: yup
@@ -30,17 +31,17 @@ const schema = yup.object().shape({
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(selectContacts);
 
   const isAlreadyExists = inputName => {
     return contacts.some(({ name }) => name === inputName);
   };
 
-  const addContact = (values, actions) => {
+  const onAddContact = (values, actions) => {
     if (isAlreadyExists(values.name)) {
       window.alert(values.name + ' is already in contacts.');
     } else {
-      dispatch(add(values));
+      dispatch(addContact(values));
       actions.resetForm();
     }
   };
@@ -49,7 +50,7 @@ export const ContactForm = () => {
     <Formik
       initialValues={{ name: '', number: '' }}
       validationSchema={schema}
-      onSubmit={addContact}
+      onSubmit={onAddContact}
     >
       <FormWrapper>
         <ul>
